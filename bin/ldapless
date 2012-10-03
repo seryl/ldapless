@@ -1,10 +1,9 @@
 #!/usr/bin/env node
-;ws = require('../lib/webserver');
+;common = require('../lib/common');
+ws = require('../lib/webserver');
 ldap = require('../lib/ldapserver');
 
 (function() {
-  process.title = "ldapless"
-
 /**
  * Module dependencies.
  */
@@ -12,7 +11,10 @@ ldap = require('../lib/ldapserver');
 var exec = require('child_process').exec
   , program = require('commander')
   , pkg = require('../package.json')
+  , name = pkg.name
   , version = pkg.version;
+
+process.title = name
 
 // CLI
 
@@ -39,7 +41,13 @@ function abort(str) {
   process.exit(1);
 }
 
-ws.start_server();
-ldap.start_server();
+var info = {
+  name: name,
+  version: version,
+  identity: common.generate_identity()
+};
+
+ws.start_server(info);
+ldap.start_server(info);
 
 })()
